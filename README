@@ -1,0 +1,22 @@
+This is a contact manager.  It's simple but effective.
+
+Features:
+-Uses a sqlite database for data persistence
+
+
+Contacts:
+	-name
+	-phone
+	-address
+	-tags
+	-notes
+
+Things you can do:
+MAIN:
+	search for contacts (by name, tag, address, etc)
+	add contact
+	view contact list
+	
+CONTACT:
+	-edit contact (change fields)
+	-add tags 
