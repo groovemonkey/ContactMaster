@@ -1,10 +1,46 @@
 eval File.read('daveutils.rb')
+require "sqlite3"
 
-def view_contacts
+#Constants
+Database_Path = 'contacts.db'
+
+# load database if it exists, otherwise create and initialize new DB
+if File.exist?(Database_Path)
+  puts "DEBUG! the file already exists! about to open file"
+  db = SQLite3::Database.open(Database_Path)
+else
+  db = SQLite3::Database.new(Database_Path)
+  query = "CREATE TABLE contacts(
+      ids INTEGER PRIMARY KEY,
+      firstname VARCHAR(255),
+      lastname VARCHAR(255),
+      phone VARCHAR(255),
+      address VARCHAR(255),
+      email VARCHAR(255),
+      occupation VARCHAR(255),
+      company VARCHAR(255),
+      tags VARCHAR(255)
+       );"
+   if db.complete? query
+     puts "Query is good...Executing the query!"
+     db.execute(query)
+   else
+     puts "Your query is not correct."
+   end
+   
+end
+
+
+
+def view_contacts(db)
+  
+  #show decoration: (title bar)
+  puts "ID  First   Last   Phone   Address    e-mail   Occupation   Company    Tags"
   #get a list of all contacts in the database
-  
-  #display that list, with indexes
-  
+  db.execute("SELECT * FROM contacts") {|row|
+    #display that list, with indexes
+    puts "#{row[0]}  | #{row[1]} | #{row[2]} | #{row[3]} | #{row[4]} | #{row[5]} | #{row[6]} | #{row[7]} | #{row[8]} "
+  }
   #let the user choose which record to view (or to go back to the main menu)
   
 end
@@ -19,10 +55,33 @@ def search
 end
 
 
-def new
+def new_contact(db)
   # get all the fields for the record
+  fname = input("What's the first name for the new contact?")
+  lname = input("What's the last name?")
+  phone = input("What's their phone number?")
+  address = input("What's their address?")
+  email = input("What's their e-mail address?")
+  occupation = input("What's their occupation?")
+  company = input("What company do they work for?")
+  tags = input("What tags do you want to associate with this person?  Separate tags with commas.")
   
-  #commit record to database
+  # commit record to database
+  query = %Q{INSERT INTO "contacts" VALUES
+  (NULL,
+  '#{fname}',
+  '#{lname}',
+  '#{phone}',
+  '#{address}',
+  '#{email}',
+  '#{occupation}',
+  '#{company}',
+  '#{tags}'
+  );}
+  
+  puts "DEBUG: the query is #{query}"
+  db.execute(query) if db.complete? query
+  
   
 end
 
@@ -51,9 +110,9 @@ end
 # this is probably an overly complicated solution
 # spaghetti code!!!
 Choices = {
-  :view => Proc.new {view_contacts},
+  :view => Proc.new {view_contacts(db)},
   :search => Proc.new {"ha"},
-  :new => Proc.new {"na"},
+  :new => Proc.new {new_contact(db)},
   :quit => Proc.new {"schna"},
   
   # choices from "view"
@@ -92,3 +151,8 @@ end
 ###############
 
 choose_at_main_menu()
+
+
+
+# finally, close the database
+db.close
