@@ -1,0 +1,10 @@
+1327465890
+Choices	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	Choices =
+Database_Path	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	Database_Path =
+choose_at_main_menu	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def choose_at_main_menu
+edit_contact	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def edit_contact(db, contact_id)
+edit_tags	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def edit_tags(contact)
+input	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/daveutils.rb	def input(prompt)
+new_contact	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def new_contact(db)
+search	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def search
+view_contacts	/home/dave/Aptana Studio 3 Workspace1/ContactMaster/prototype.rb	def view_contacts(db)

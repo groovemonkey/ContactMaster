@@ -41,8 +41,27 @@ def view_contacts(db)
     #display that list, with indexes
     puts "#{row[0]}  | #{row[1]} | #{row[2]} | #{row[3]} | #{row[4]} | #{row[5]} | #{row[6]} | #{row[7]} | #{row[8]} "
   }
-  #let the user choose which record to view (or to go back to the main menu)
   
+  #let the user choose which record to view (or to go back to the main menu)
+  choice = input("Which record would you like to edit? (type the ID number)")
+
+  
+  # if they type in something retarded instead of a number, to_i returns 0.
+  if choice.to_i == 0
+    puts "You didn't type a number, dummy."
+    
+  else
+    #if the integer they enter doesn't correspond to an existing ID'
+    if db.execute("Select ids, firstname, lastname, phone, address, 
+                    email FROM contacts WHERE ids = #{choice}").empty?       
+      puts "Sorry, the ID you selected is not valid.  Goodbye."
+      
+    else
+      #things check out -- go ahead and edit the contact
+      edit_contact(db, choice) 
+      
+    end
+  end  
 end
 
 
@@ -78,12 +97,11 @@ def new_contact(db)
   '#{company}',
   '#{tags}'
   );}
-  
-  puts "DEBUG: the query is #{query}"
-  db.execute(query) if db.complete? query
-  
-  
+
+  #db.execute(query) if db.complete? query
 end
+
+
 
 
 
@@ -91,15 +109,65 @@ end
 # these functions should only be called from the "contact display" screen, 
 # and called on a specific contact record
 
-def edit_contact
-  # used in CREATING NEW RECORDS and for EDITING EXISTING CONTACTS
-  # edit info
+def edit_contact(db, contact_id)
+  # Get the right record, stuff the data into the "contact" variable
+  edit_contact_query = "SELECT 
+      ids
+      ,firstname
+      ,lastname
+      ,phone
+      ,address
+      ,email
+      ,occupation
+      ,company
+      ,tags
+      
+  FROM contacts WHERE ids = #{contact_id};"
   
-  # commit record to database
+  contact = db.execute(edit_contact_query)
+
+  # edit the data
+  puts "The contact record you've chosen is:\n\n#{contact}\n\n"
+  what_to_change = input("What would you like to change?  You can change
   
+          firstname
+          lastname
+          phone
+          address
+          email
+          occupation
+          company
+          
+          or you can type 'edit tags' to edit associated tags.")
+          
+  if what_to_change == "edit tags"
+    #WARNING -- passes the whole contact array into the edit-tags function
+    edit_tags(contact)
+    
+  #if it's an allowed choice  
+  elsif [ "firstname", "lastname", "phone", "address", "email", "occupation", "company",].include?(what_to_change)
+    newinfo = input("What would you like to change the #{what_to_change} to?")
+    
+    #make the change
+    query = "UPDATE contacts
+              SET #{what_to_change}='#{newinfo}'
+              WHERE ids='#{contact_id}'"
+              
+    db.execute(query)
+    
+  end
+    
+    changedcontact = db.execute(edit_contact_query)
+    puts "The contact record is now\n\n#{changedcontact}\n\n"
+    
 end
 
-def add_tag_to_contact(contact)
+
+
+
+
+def edit_tags(contact)
+  #TODO: add REMOVE TAGS feature
   # get the tags that should be added
   
   # add those tags to the contact record
@@ -116,7 +184,7 @@ Choices = {
   :quit => Proc.new {"schna"},
   
   # choices from "view"
-  :choose_contact => Proc.new {"choose_contact"},
+  :edit => Proc.new {edit_contact(db,"1")},
   
 }
 
@@ -137,12 +205,6 @@ def choose_at_main_menu
   Choices[chosen].call
   
 end
-
-
-
-
-
-
 
 
 

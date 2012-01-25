@@ -1,0 +1,4 @@
+TODO for contactmaster
+
+remove spaghetti code (yes, procs are cool, but they are not the correct solution for this.)
+finish "edit" functionality.  think through it first, write down requirements, then code it.
